@@ -9,32 +9,54 @@
     - { role: openstack-auth-ansible, tags: auth-ansible }
 
   tasks:
-  - name: Create Web Instances
+  - name: Create {{ item }} Instances
     include_role:
-      name: openstack-instance
-      vars_from: web.yaml
+       name: openstack-instance
+       vars_from: "{{ item }}.yaml"
+    with_items:
+      - web
+      - was
+      - db
 
-  - name: Create Was Instances
-    include_role:
-      name: openstack-instance
-      vars_from: was.yaml
+  - name: debug newnodes
+    debug:
+      var: newnodes
 
-  - name: Create DB Instances
-    include_role:
-      name: openstack-instance
-      vars_from: db.yaml
+  - name: Waiting for role includes to complete
+    async_status:
+      jid={{ newnodes['results'][0]['ansible_job_id'] }}
+    register: my_async_job_status
+    until: my_async_job_status.finished
+    retries: 20
 
-#  tasks:
-#  - name: Create instances
-#    include_role:
-#       name: openstack-instance
-#       vars_from: "{{ item }}.yaml"
-#    with_items:
-#      - frontend
-#      - app1
-#      - app2
-#      - db
+  - name: gather instance facts
+    os_server_facts:
+      auth: "{{ os_auth }}"
+      server: db*
+    register: result
 
+  - name: debug
+    debug:
+      var: openstack_servers
+
+  - name: Wait for Last Instance to be available
+    wait_for:
+      host: "{{ openstack_servers[0]['accessIPv4'] }}"
+      port: 22
+      search_regex: OpenSSH
+      timeout: 300
+    delegate_to: "{{ inventory_hostname }}"
+
+
+#  - name: add instance
+#    add_host:
+#      name: "{{ instance_name }}{{ count }}"
+#
+#  - name: gather instance facts
+#    os_server_facts:
+#      auth: "{{ os_auth }}"
+#      server: web*
+#
 #  - name: Wait for "{{ instance_name }}" to be available
 #    wait_for:
 #      host: "{{ inventory_hostname }}"
@@ -42,33 +64,3 @@
 #      search_regex: OpenSSH
 #      timeout: 180
 #    delegate_to: "{{ inventory_hostname }}"
-
-
-#- name: Check sync status
-#  async_status:
-#    jid: "{{ instance_deploy.ansible_job_id }}"
-#  register: async_poll_results
-#  until: async_poll_results.finished
-#  until: instanceipa.finished
-#  retries: 60
-
-
-#  - name: Create frontend instance
-#    include_role:
-#       name: openstack-instance
-#       vars_from: frontend.yaml
-#
-#  - name: Create app1 instancea
-#    include_role:
-#       name: openstack-instance
-#       vars_from: app1.yaml
-#
-#  - name: Create app2 instance
-#    include_role:
-#       name: openstack-instance
-#       vars_from: app2.yaml
-#
-#  - name: Create db instance
-#    include_role:
-#       name: openstack-instance
-#       vars_from: db.yaml

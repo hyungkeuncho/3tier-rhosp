@@ -6,7 +6,7 @@
 - name: Create a server instance
   os_server:
     auth: "{{ os_auth }}"
-    name: "{{ instance_name }}_{{ item }}"
+    name: "{{ instance_name }}{{ item }}"
     image: wwd_rhel
     meta: "group={{ group }},deployment_name={{ deployment }}"
     flavor: m2.small_generated_by_ansible
@@ -17,32 +17,27 @@
     nics:
     - net-name: "{{ vm_nic }}"
   register: newnodes
+  async: 120
+  poll: 0
   with_sequence: start=1 end="{{ count }}"
 
-#- add_host: name={{ item.server.public_v4 }}
-#    groups="{{ group }}"
-#    ansible_user=root
-#    instance_name={{ item.server.name }}
-#  with_items: "{{ newnodes.results }}"
-#
-#- name: "Wait for SSH banners"
-#  local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH delay=5
-#  become: False
-#
-#- name: install apps
-#  apt: name={{ item }} update_cache=yes state=latest
-#  with_items:
-#    - htop
-#    - git
-#
-#- name: Pause play to interact with the servers
-#  pause: prompt="Playbook paused... hit <enter> to continue or <ctrl-c a> to abort"
+- name: add instance
+  add_host:
+    name: "{{ instance_name }}{{ count }}"
 
+- name: gather instance facts
+  os_server_facts:
+    auth: "{{ os_auth }}"
+    server: "{{ instance_name }}*"
+  register: result
 
-
+#- name: debug
+#  debug:
+#    var: openstack_servers[0]
+#
 #- name: Wait for "{{ instance_name }}" to be available
 #  wait_for:
-#    host: "{{ instancefloatingip.floating_ip.floating_ip_address }}"
+#    host: "{{ openstack_servers[0]['accessIPv4'] }}"
 #    port: 22
 #    search_regex: OpenSSH
 #    timeout: 180
