@@ -1,0 +1,23 @@
+---
+# tasks file for openstack-user
+
+- name: Create {{ project_name }}'s User.
+  os_user:
+    auth: "{{ os_auth }}"
+    state: present
+    name: ansible
+    password: redhat
+    email: ansible@localhost
+    domain: default
+    interface: admin
+
+- name: User's Role Setting.
+  os_user_role:
+    auth: "{{ os_auth }}"
+    user: "{{ item }}"
+    role: admin
+    project: automated
+    interface: admin
+  with_items:
+    - admin
+    - ansible

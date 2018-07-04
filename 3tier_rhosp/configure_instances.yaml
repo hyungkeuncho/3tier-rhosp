@@ -1,0 +1,70 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: Configure DB
+  gather_facts: no
+  hosts: meta-group_db
+  tasks:
+  - name: Restart DB
+    service:
+      name: mariadb
+      state: started
+
+
+- name: Configure WAS
+  hosts: meta-group_was
+  gather_facts: no
+  become_user: root
+  become: true
+  tasks:
+  - name: configure JBoss EAP on was group
+    template:
+      src: roles/httpd/templates/standalone.xml.j2
+      dest: /opt/EAP-7.1.0/standalone/configuration/standalone.xml
+      backup: yes
+
+  - name: Restart WAS and wait 60s
+    shell: nohup /opt/EAP-7.1.0/bin/standalone.sh &
+
+  - name: wait 60s
+    shell: sleep 60
+
+- name: Configure WEB
+  hosts: meta-group_web
+  gather_facts: no
+  tasks:
+  - name: configure HTTPD on web group
+    template:
+      src: roles/httpd/templates/workers.properties.j2
+      dest: /opt/jbcs-httpd24-2.4/httpd/conf.d/workers.properties
+      backup: yes
+
+  - name: Restart WEB
+    shell: /opt/jbcs-httpd24-2.4/httpd/sbin/apachectl start
+
+
+
+
+
+#    lineinfile:
+#      backrefs: yes
+#      backup: true
+#      path: /opt/jbcs-httpd24-2.4/httpd/conf.d/workers.properties
+#      regexp: worker.worker1.host=127.0.0.1
+#      line: worker.worker1.host={{ hostvars[item].openstack.public_v4 }}
+#    with_items: "{{ groups['meta-group_web'] }}"
+
+#    lineinfile:
+#      backrefs: yes
+#      backup: true
+#      path: /opt/EAP-7.1.0/standalone/configuration/standalone.xml
+#      regexp: '                    <connection-url>jdbc:mariadb://localhost:3306/testdb</connection-url>'
+#      line: "                    <connection-url>jdbc:mariadb://{{ hostvars[item].openstack.public_v4 }}:3306/testdb</connection-url>"
+#    with_items: "{{ groups['meta-group_db'] }}"
+#
+#- name: Configure DB
+#  hosts: meta-group_was
+#  tasks:
+#  - name: configure mariadb on was group
+#    include_role:
+#      name: mariadb

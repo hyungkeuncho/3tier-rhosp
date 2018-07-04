@@ -1,0 +1,15 @@
+# An entry that lists all the workers defined
+#worker.list=worker1,worker2
+worker.list=worker1
+
+# Entries that define the host and port associated with these workers
+{% for host in groups['meta-group_was'] %}
+worker.worker1.host={{ hostvars[host].openstack.public_v4 }}
+{% endfor %}
+
+worker.worker1.port=8009
+worker.worker1.type=ajp13
+
+#worker.worker2.host=IP_TO_SET_2
+#worker.worker2.port=AJP_PORT_2
+#worker.worker2.type=ajp13

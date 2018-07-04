@@ -1,0 +1,8 @@
+---
+instance_name: web
+group: web
+deployment: dev
+security_group_name: web_servers
+vm_nic: automated_network
+floating_answer: true
+count: "{{ web_count }}"

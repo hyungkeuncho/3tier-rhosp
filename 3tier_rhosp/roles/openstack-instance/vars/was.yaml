@@ -1,0 +1,8 @@
+---
+instance_name: was
+group: was
+deployment: dev
+security_group_name: was_servers
+vm_nic: automated_network
+floating_answer: true
+count: 1

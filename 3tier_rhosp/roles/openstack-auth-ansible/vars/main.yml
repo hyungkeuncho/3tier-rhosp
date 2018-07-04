@@ -1,0 +1,7 @@
+---
+# vars file for openstack-auth
+
+##############################################################
+#### BRING INFORMATION FROM CREDENTIALS SETTINGS ON TOWER ####
+##############################################################
+os_config_file: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"

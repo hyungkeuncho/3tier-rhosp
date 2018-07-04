@@ -1,0 +1,8 @@
+---
+instance_name: db
+group: db
+deployment: dev
+security_group_name: db_servers
+vm_nic: automated_network
+floating_answer: true
+count: 1

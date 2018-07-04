@@ -1,0 +1,3 @@
+---
+# defaults file for openstack-instance
+floating_answer: false

@@ -1,0 +1,18 @@
+---
+# tasks file for jbosseap
+- name: copy standalone.xml 
+  template:
+    src: standalone.xml.j2
+    dest: /opt/EAP-7.1.0/standalone/configuration/standalone.xml
+    backup: yes
+#  ignore_errors: true
+
+- name: add hostname in hosts
+  lineinfile: 
+    dest: /etc/hosts
+    line: "{{ ansible_default_ipv4.address }}   {{ansible_hostname}}.novalocal {{ ansible_hostname }}.localdomain"
+
+- name: restart jboss
+  shell: /opt/EAP-7.1.0/bin/standalone.sh &
+
+

@@ -1,0 +1,49 @@
+---
+# tasks file for openstack-instance
+- name: Create a server instance
+  os_server:
+    auth: "{{ os_auth }}"
+    name: "{{ instance_name }}"
+    image: rhel-guest
+    meta: "group={{ group }},deployment_name={{ deployment }}"
+    flavor: m2.small
+    security_groups: "{{ security_group_name }}"
+    auto_ip: no
+    key_name: ansible_ssh
+    wait: yes
+    nics:
+    - net-name: "{{ vm_nic }}"
+  register: instanceipa
+
+- debug:
+    var: instanceipa
+
+- name: Print instance_name variables.
+  debug:
+    var: floating_assign
+
+- name: Add floating IP to "{{ instance_name }}"
+  os_floating_ip:
+    auth: "{{ os_auth }}"
+    state: present
+    reuse: yes
+    server: "{{ instance_name }}"
+    network: ext_network
+    wait: true
+    timeout: 180
+  when: floating_assign
+  register: instancefloatingip
+
+- name: Show "{{ instanceip }}" public IP
+  debug: var=instancefloatingip.floating_ip.floating_ip_address
+async: 200
+poll: 10
+
+
+#- name: Wait for "{{ instance_name }}" to be available
+#  wait_for:
+#    host: "{{ instancefloatingip.floating_ip.floating_ip_address }}"
+#    port: 22
+#    search_regex: OpenSSH
+#    timeout: 180
+#  delegate_to: "{{ inventory_hostname }}"

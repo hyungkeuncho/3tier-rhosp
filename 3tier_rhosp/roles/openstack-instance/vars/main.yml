@@ -1,0 +1,8 @@
+---
+# vars file for openstack-instance
+webserver_name: web
+databaseserver_name: db
+flavor_name: m1.small
+webserver_group: webservers
+database_group: databaseservers
+deployment: dev

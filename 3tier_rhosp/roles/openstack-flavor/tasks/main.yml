@@ -1,0 +1,10 @@
+---
+# tasks file for openstack-flavor
+- name: Create m2.small flavor
+  os_nova_flavor:
+    auth: "{{ os_auth }}"
+    state: present
+    name: m2.small_generated_by_ansible
+    ram: 2048
+    vcpus: 1
+    disk: 10

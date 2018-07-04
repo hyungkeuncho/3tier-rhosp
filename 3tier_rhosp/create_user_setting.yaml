@@ -1,0 +1,64 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: Provision Instance from TOWER with ansible
+  hosts: localhost
+  connection: local
+
+  roles:
+    - { role: openstack-auth-ansible, tags: auth-ansible }
+#    - { role: openstack-project, tags: project }
+#    - { role: openstack-user, tags: user }
+    - { role: openstack-keypair, tags: keypair }
+    - { role: openstack-network, tags: network }
+    - { role: openstack-flavor, tags: flavor }
+    - { role: openstack-securitygroup, tags: flavor }
+
+#  tasks:
+#  - name: Create instances
+#    include_role:
+#       name: openstack-instance
+#       vars_from: "{{ item }}.yaml"
+#    with_items:
+#      - frontend
+#      - app1
+#      - app2
+#      - db
+#
+#  - name: Wait for "{{ instance_name }}" to be available
+#    wait_for:
+#      host: "{{ inventory_hostname }}"
+#      port: 22
+#      search_regex: OpenSSH
+#      timeout: 180
+#    delegate_to: "{{ inventory_hostname }}"
+
+
+#- name: Check sync status
+#  async_status:
+#    jid: "{{ instance_deploy.ansible_job_id }}"
+#  register: async_poll_results
+#  until: async_poll_results.finished
+#  until: instanceipa.finished
+#  retries: 60
+
+
+#  - name: Create frontend instance
+#    include_role:
+#       name: openstack-instance
+#       vars_from: frontend.yaml
+#
+#  - name: Create app1 instancea
+#    include_role:
+#       name: openstack-instance
+#       vars_from: app1.yaml
+#
+#  - name: Create app2 instance
+#    include_role:
+#       name: openstack-instance
+#       vars_from: app2.yaml
+#
+#  - name: Create db instance
+#    include_role:
+#       name: openstack-instance
+#       vars_from: db.yaml

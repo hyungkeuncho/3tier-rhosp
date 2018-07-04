@@ -1,0 +1,7 @@
+---
+instance_name: client
+group: frontends
+deployment: dev
+security_group_name: frontend_servers
+vm_nic: client_network
+floating_answer: true
