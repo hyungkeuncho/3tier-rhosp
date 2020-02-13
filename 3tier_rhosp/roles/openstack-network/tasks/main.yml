@@ -24,27 +24,27 @@
   os_network:
     auth: "{{ os_auth }}"
     state: present
-    interface: admin
+    interface: public
     name: automated_network
     external: false
 
-- name: Create Subnet by Ansible  
-  os_subnet:
-    auth: "{{ os_auth }}"
-    state: present
-    network_name: automated_network
-    name: automated_subnet
-    cidr: 10.10.10.0/24
-    dns_nameservers:
-       - 8.8.8.7
-       - 8.8.8.8
+#- name: Create Subnet by Ansible  
+#  os_subnet:
+#    auth: "{{ os_auth }}"
+#    state: present
+#    network_name: automated_network
+#    name: automated_subnet
+#    cidr: 10.10.10.0/24
+#    dns_nameservers:
+#       - 8.8.8.7
+#       - 8.8.8.8
 
-- os_router:
-    auth: "{{ os_auth }}"
-    state: present
-    name: auto_router1
-    network: ext_network
-    external_fixed_ips:
-      - subnet: external_subnet
-    interfaces:
-      - automated_subnet
+#- os_router:
+#    auth: "{{ os_auth }}"
+#    state: present
+#    name: auto_router1
+#    network: ext_network
+#    external_fixed_ips:
+#      - subnet: external_subnet
+#    interfaces:
+#      - automated_subnet
