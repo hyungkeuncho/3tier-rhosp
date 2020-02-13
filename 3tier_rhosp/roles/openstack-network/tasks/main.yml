@@ -43,7 +43,7 @@
     auth: "{{ os_auth }}"
     state: present
     name: auto_router1
-    network: automated_network
+    network: public
 #    external_fixed_ips:
 #      - subnet: automated_subnet
     interfaces:
