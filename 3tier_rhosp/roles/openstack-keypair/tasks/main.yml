@@ -16,5 +16,5 @@
   os_keypair:
     auth: "{{ os_auth }}"
     state: present
-    name: red_ssh
+    name: cho_ssh
     public_key_file: "{{ ansible_env.HOME }}/.ssh/cho_id_rsa.pub"
