@@ -4,17 +4,17 @@
   user:
     name: "{{ ansible_env.USER }}"
     generate_ssh_key: yes
-    ssh_key_file: .ssh/red_id_rsa
+    ssh_key_file: .ssh/cho_id_rsa
 
 - name: delete_exist_os_keypair
   os_keypair:
     auth: "{{ os_auth }}"
     state: absent
-    name: ansible_ssh
+    name: cho_ssh
 
 - name: create_os_keypair
   os_keypair:
     auth: "{{ os_auth }}"
     state: present
-    name: ansible_ssh
-    public_key_file: "{{ ansible_env.HOME }}/.ssh/test_id_rsa.pub"
+    name: red_ssh
+    public_key_file: "{{ ansible_env.HOME }}/.ssh/cho_id_rsa.pub"
